@@ -1,4 +1,5 @@
-from flask import Flask, url_for
+from flask import Flask, url_for, request, redirect
+import datetime
 app = Flask(__name__)
 
 @app.route("/")
@@ -38,5 +39,30 @@ def image():
         <h1>Дуб</h1>
         <img src="''' + path + '''">
     </body>
+</html>'''
+
+count = 0
+
+@app.route('/counter')
+def counter():
+    global count
+    count +=1
+    time = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+    url = request.url
+    client_ip = request.remote_addr    
+    return '''
+<!doctype html>
+<html>
+    <body>
+        Сколько раз вы сюда заходили: ''' + str(count) + '''
+        <hr>
+        Дата и время: ''' + time + ''' <br>
+        Запрошенный адрес: ''' + url + ''' <br>
+        Ваш IP-адрес: ''' + client_ip + ''' <br>
+    </body>
 </html>
 '''
+
+@app.route("/info")
+def info():
+    return redirect("/author")
