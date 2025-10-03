@@ -6,21 +6,41 @@ app = Flask(__name__)
 def not_found(err):
     return "Нет такой страницы", 404
 
-@app.route("/")
-@app.route("/web")
+@app.route('/')
+@app.route('/index')
+def index():
+    return '''<!doctype html>
+<html>
+    <head>
+        <title>НГТУ, ФБ, Лабораторные работы</title>
+    </head>
+    <body>
+        <header><h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1></header>
+        <nav>
+            <ul>
+                <li><a href="/lab1">Первая лабораторная</a></li>
+            </ul>
+        </nav>
+        <footer>
+            <p>Конев Станислав Сергеевич, ФБИ-34, 3 курс, 2025</p>
+        </footer>
+    </body>
+</html>'''
+
+@app.route("/lab1/web")
 def web():
     return """<!doctype html> 
         <html>
             <body>
                 <h1>web-сервер на flask</h1>
-                <a href="/author">author</a>
+                <a href="/lab1/author">author</a>
             </body>
         </html>""", 200, {
             "X-Server": "sample",
             'Content-Type': 'text/plain; charset=utf-8'
             }
 
-@app.route("/author")
+@app.route("/lab1/author")
 def author():
     name = "Конев Станислав Сергеевич"
     group = "ФБИ-34"
@@ -32,11 +52,11 @@ def author():
                 <p>Студент: """ + name + """</p>
                 <p>Группа: """ + group + """</p>
                 <p>Факультет: """ + faculty + """</p>
-                <a href="/web">web</a>
+                    <a href="/lab1/web">web</a>
             </body>
         </html>"""
 
-@app.route('/image')
+@app.route('/lab1/image')
 def image():
     css = url_for('static', filename='lab1.css')
     img = url_for('static', filename='oak.jpg')
@@ -52,35 +72,45 @@ def image():
     <img class="lab1" src="{img}" alt="Дуб">
 </body>
 </html>'''
-     return html
+    return html
 
 count = 0
 
-@app.route('/counter')
+count = 0
+
+@app.route('/lab1/counter')
 def counter():
     global count
-    count +=1
+    count += 1
     time = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     url = request.url
-    client_ip = request.remote_addr    
-    return '''
+    client_ip = request.remote_addr
+    clear_url = url_for('clear_counter')
+    return f'''
 <!doctype html>
 <html>
-    <body>
-        Сколько раз вы сюда заходили: ''' + str(count) + '''
-        <hr>
-        Дата и время: ''' + time + ''' <br>
-        Запрошенный адрес: ''' + url + ''' <br>
-        Ваш IP-адрес: ''' + client_ip + ''' <br>
-    </body>
+    <head><title>Счётчик</title></head>
+<body>
+    Сколько раз вы сюда заходили: {count}
+    <hr>
+    Дата и время: {time} <br>
+    Запрошенный адрес: {url} <br>
+    Ваш IP-адрес: {client_ip} <br>
+    <p><a href="{clear_url}">Очистить счётчик</a></p>
+</body>
 </html>
 '''
+@app.route('/lab1/counter/clear')
+def clear_counter():
+    global count
+    count = 0
+    return redirect(url_for('counter'))
 
-@app.route("/info")
+@app.route("/lab1/info")
 def info():
-    return redirect("/author")
+    return redirect("/lab1/author")
 
-@app.route("/created")
+@app.route("/lab1/created")
 def created():
     return '''
 <!doctype html"
@@ -90,4 +120,3 @@ def created():
         <div><i>что-то создано...</i></div>
     </body>
 </html>
-''',201
