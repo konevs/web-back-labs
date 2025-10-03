@@ -135,3 +135,112 @@ def created():
     </body>
 </html>
 ''',201
+
+@app.route("/400")
+def bad_request():
+    return '''<!doctype html>
+<html>
+<head>
+    <title>400 Bad Request</title>
+</head>
+<body>
+    <h1>400 Bad Request</h1>
+    <p>Сервер не может обработать запрос из-за синтаксической ошибки.</p>
+</body>
+</html>''', 400
+
+@app.route("/401")
+def unauthorized():
+    return '''<!doctype html>
+<html>
+<head>
+    <title>401 Unauthorized</title>
+</head>
+<body>
+    <h1>401 Unauthorized</h1>
+    <p>Для доступа к запрашиваемому ресурсу требуется аутентификация.</p>
+</body>
+</html>''', 401
+
+@app.route("/402")
+def payment_required():
+    return '''<!doctype html>
+<html>
+<head>
+    <title>402 Payment Required</title>
+</head>
+<body>
+    <h1>402 Payment Required</h1>
+    <p>Для доступа к ресурсу требуется оплата.</p>
+</body>
+</html>''', 402
+
+@app.route("/403")
+def forbidden():
+    return '''<!doctype html>
+<html>
+<head>
+    <title>403 Forbidden</title>
+</head>
+<body>
+    <h1>403 Forbidden</h1>
+    <p>Доступ к ресурсу запрещен.</p>
+</body>
+</html>''', 403
+
+@app.errorhandler(404)
+def not_found(err):
+    img = url_for('static', filename='494.jpg')
+    return f'''<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Ошибка 404</title>
+<style>
+  body {{
+    background: white;
+    color: black;
+    font-family:Arial;
+    text-align:center;
+    padding:40px
+    }}
+  h1 {{
+    color:#ff6b6b
+    }}
+  img {{
+    width:300px;
+    margin-top:20px
+    }}
+</style>
+</head>
+<body>
+  <h1>Страница не найдена (404)</h1>
+  <p>Такой страницы нет.</p>
+  <img src="{img}" alt="404">
+  <p><a href="/">Вернуться на главную</a></p>
+</body>
+</html>''', 404
+
+@app.route("/405")
+def method_not_allowed():
+    return '''<!doctype html>
+<html>
+<head>
+    <title>405 Method Not Allowed</title>
+</head>
+<body>
+    <h1>405 Method Not Allowed</h1>
+    <p>Метод нельзя применить для данного ресурса.</p>
+</body>
+</html>''', 405
+
+@app.route("/418")
+def teapot():
+    return '''<!doctype html>
+<html>
+<head>
+    <title>418 I'm a teapot</title>
+</head>
+<body>
+    <h1>418 I'm a teapot</h1>
+    <p>Я чайник и не могу заваривать кофе.</p>
+</body>
+</html>''', 418
