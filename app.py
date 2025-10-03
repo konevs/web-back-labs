@@ -27,6 +27,19 @@ def index():
     </body>
 </html>'''
 
+@app.route('/lab1')
+def lab1():
+    return '''<!doctype html>
+<html>
+    <head><title>Лабораторная 1</title></head>
+    <body>
+        <p>Flask — фреймворк для создания веб-приложений на языке программирования Python, использующий набор инструментов Werkzeug, 
+        а также шаблонизатор Jinja2. Относится к категории так называемых микрофреймворков — минималистичных каркасов веб-приложений, 
+        сознательно предоставляющих лишь самые базовые возможности.</p>
+        <p><a href="/">На корень сайта</a></p>
+    </body>
+</html>'''
+
 @app.route("/lab1/web")
 def web():
     return """<!doctype html> 
@@ -52,7 +65,7 @@ def author():
                 <p>Студент: """ + name + """</p>
                 <p>Группа: """ + group + """</p>
                 <p>Факультет: """ + faculty + """</p>
-                    <a href="/lab1/web">web</a>
+                <a href="/lab1/web">web</a>
             </body>
         </html>"""
 
@@ -89,7 +102,7 @@ def counter():
     return f'''
 <!doctype html>
 <html>
-    <head><title>Счётчик</title></head>
+<head><title>Счётчик</title></head>
 <body>
     Сколько раз вы сюда заходили: {count}
     <hr>
@@ -100,6 +113,7 @@ def counter():
 </body>
 </html>
 '''
+
 @app.route('/lab1/counter/clear')
 def clear_counter():
     global count
@@ -120,3 +134,4 @@ def created():
         <div><i>что-то создано...</i></div>
     </body>
 </html>
+''',201
