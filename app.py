@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, redirect
+from flask import Flask, url_for, request, redirect, abort, render_template
 import datetime
 app = Flask(__name__)
 
@@ -42,13 +42,13 @@ def lab1():
     <ul>
         <li><a href="/">Главная страница</a></li>
         <li><a href="/index">Index</a></li>
-        <li><a href="/lab1/web">/lab1/web</a></li>
-        <li><a href="/lab1/author">/lab1/author</a></li>
-        <li><a href="/lab1/image">/lab1/image</a></li>
-        <li><a href="/lab1/counter">/lab1/counter</a></li>
-        <li><a href="/lab1/counter/clear">/lab1/counter/clear</a></li>
-        <li><a href="/lab1/info">/lab1/info</a></li>
-        <li><a href="/lab1/created">/lab1/created</a></li>
+        <li><a href="/lab1/web">web</a></li>
+        <li><a href="/lab1/author">author</a></li>
+        <li><a href="/lab1/image">image</a></li>
+        <li><a href="/lab1/counter">counter</a></li>
+        <li><a href="/lab1/counter/clear">counter/clear</a></li>
+        <li><a href="/lab1/info">info</a></li>
+        <li><a href="/lab1/created">created</a></li>
         <li><a href="400">400 Bad Request</a></li>
         <li><a href="401">401 Unauthorized</a></li>
         <li><a href="402">402 Payment Required</a></li>
@@ -63,7 +63,8 @@ def lab1():
 
 @app.route("/lab1/web")
 def web():
-    return """<!doctype html> 
+    return """
+    <!doctype html> 
         <html>
             <body>
                 <h1>web-сервер на flask</h1>
@@ -86,7 +87,7 @@ def author():
                 <p>Студент: """ + name + """</p>
                 <p>Группа: """ + group + """</p>
                 <p>Факультет: """ + faculty + """</p>
-                <a href="/lab1/web">web</a>
+                <li><a href="/lab1">Первая лабораторная</a></li>
             </body>
         </html>"""
 
@@ -283,4 +284,45 @@ def handle_500(err):
   <p>Произошла ошибка. Попробуйте позже.</p>
   <a href="/">На главную</a>
 </body>
+
 </html>''', 500
+
+@app.route('/lab2/a')
+def a1():
+    return 'без слэша'
+
+@app.route('/lab2/a/')
+def a2():
+    return 'со слэшем'
+
+flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашка']
+
+@app.route('/lab2/flowers/<int:flower_id>')
+def flowers(flower_id):
+    if flower_id >= len(flower_list):
+        abort(404)
+    else:    
+        return "цветок: " + flower_list[flower_id]
+@app.route('/lab2/add_flower/<name>')
+
+def add_flower(name):
+    flower_list.append(name)
+    return f'''
+<!doctype html>
+<html>
+    <body>
+    <h1>Добавлен новый цветок</h1>
+    <p>Название нового цветка: {name} </p>
+    <p>Всего цветов: {len(flower_list)}</p> 
+    <p>Полный список: {flower_list}</p>
+    </body> 
+</html>   
+'''      
+
+@app.route('/lab2/example')
+def example():
+    name = 'Станислав Конев'
+    number = 'Лабораторная работа 2'
+    group = 'ФБИ-34'
+    course = '3 курс'
+    return render_template('example.html', name=name, number=number, group=group, course=course)
