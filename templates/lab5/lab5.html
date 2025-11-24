@@ -10,7 +10,7 @@
         color: black;
     }
     .lab5 {
-        background-color: rgb(34, 0, 255);
+        background-color: rgb(0, 255, 157);
         max-width: 700px;
         margin: 50px;
         text-align: center;
@@ -25,11 +25,23 @@
     <h1>База знаний</h1>
     <div class="lab5">
             <ul style="padding: 0; font-size: 18px"> 
-            <a href="/lab5/login">Войти</a>
-            <a href="/lab5/register">Регистрация</a>
             <a href="/lab5/list">Список статей</a>
-            <a href="/lab5/create">Создать статью</a>  
-            <div class="username">{{name}} </div>
+            <a href="/lab5/create">Создать статью</a>
+            <a href="/lab5/users">Все пользователи</a>    
+            {% if login %}
+                <a href="/lab5/logout">Выйти</a>
+            {% else %}
+                <a href="/lab5/login">Войти</a>
+                <a href="/lab5/register">Регистрация</a>
+            {% endif %}
+
+            <div class="username">
+                {% if login %}
+                    {{ login }}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </div>
         </ul>
     </div>
 {% endblock %}
