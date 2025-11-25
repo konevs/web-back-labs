@@ -1,3 +1,4 @@
+
 from flask import Blueprint, render_template, request, redirect, session, current_app
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -51,7 +52,6 @@ def register():
         cur.execute("SELECT login FROM users WHERE login=%s;", (login,))
     else:
         cur.execute("SELECT login FROM users WHERE login=?;", (login,))
-        
     if cur.fetchone():
         db_close(conn, cur)
         return render_template('lab5/register.html', error="Такой пользователь уже существует")
