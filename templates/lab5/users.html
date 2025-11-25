@@ -3,22 +3,54 @@
 {% block lab %}Лабораторная работа 5{% endblock %}
 
 {% block main %}
-<h1>Пользователи</h1>
+<h1>Список пользователей</h1>
 
 {% if not users %}
     <p>Пользователей пока нет.</p>
 {% else %}
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>Логин</th>
-            <th>Имя</th>
-        </tr>
-        {% for u in users %}
-        <tr>
-            <td>{{ u['login'] }}</td>
-            <td>{{ u['name'] }}</td>
-        </tr>
-        {% endfor %}
+    <style>
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .user-table th, .user-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: #f2f2f2;
+            color: #1a3c5a;
+        }
+        .user-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .user-table tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Имя</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.login }}</td>
+                <td>{{ u.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="/lab5/login" style="color: #1a3c5a; text-decoration: underline;">Назад ко входу</a>
+</div>
+
 {% endblock %}

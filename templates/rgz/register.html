@@ -1,0 +1,24 @@
+{% extends "rgz/rgz_base.html" %}
+
+{% block lab %}РГЗ - Регистрация{% endblock %}
+
+{% block main %}
+<h1>Регистрация</h1>
+
+{% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+{% with messages = get_flashed_messages(category_filter=["error"]) %}
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color:red">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<form method="post">
+    <p>Логин: <input name="login" value="{{ login or '' }}"></p>
+    <p>Пароль: <input type="password" name="password"></p>
+    <button type="submit">Создать аккаунт</button>
+</form>
+
+<p><a href="/rgz/">Назад к камере хранения</a></p>
+{% endblock %}

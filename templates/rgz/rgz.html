@@ -1,0 +1,124 @@
+{% extends "rgz/rgz_base.html" %}
+
+{% block lab %}РГЗ. Камера хранения{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='rgz/rgz.css') }}">
+<style>
+    .flashes li { color: #38a169; }
+    .flashes li.error { color: #e53e3e; }
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div style="margin-bottom: 15px;">
+    <a href="/" style="color: #667eea; text-decoration: none; font-weight: bold;">&larr; Все лабораторные</a>
+</div>
+
+<h1>Камера хранения</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes" style="list-style: none; padding: 0;">
+    {% for category, message in messages %}
+      <li class="{{ category }}">
+          {{ message }}
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<p id="user-info">
+    {% if user %}
+        Вы вошли как: <b>{{ user.login }}</b> {% if user.is_admin %}(администратор){% endif %}
+    {% else %}
+        Вы не авторизованы.
+    {% endif %}
+</p>
+
+{% if not user %}
+<div id="guest-panel">
+    <a href="/rgz/login" style="margin-right: 15px;">Вход</a>
+    <a href="/rgz/register">Регистрация</a>
+</div>
+{% endif %}
+
+{% if user %}
+<div id="user-panel">
+    <form action="/rgz/logout" method="get" style="display:inline;">
+        <button type="submit" style="background:none; border:none; color: #667eea; text-decoration: underline; padding:0;">Выйти</button>
+    </form>
+    &nbsp;|&nbsp;
+    <form action="/rgz/delete-account" method="post" style="display:inline;">
+        <button type="submit" style="background:none; border:none; color: #e53e3e; text-decoration: underline; padding:0;" onclick="return confirm('Удалить аккаунт?')">Удалить аккаунт</button>
+    </form>
+</div>
+{% endif %}
+
+<hr style="border: 0; border-top: 1px solid #edf2f7; margin: 20px 0;">
+
+<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+    <p>Всего: <span id="total">{{ total }}</span></p>
+    <p>Занято: <span id="occupied">{{ occupied }}</span></p>
+    <p>Свободно: <span id="free">{{ free }}</span></p>
+    {% if user and not user.is_admin %}
+    <p>Ваши брони: <span id="mycount">{{ my_count }}</span> / 5</p>
+    {% endif %}
+</div>
+
+<div id="locker-grid">
+    {% for l in lockers %}
+        
+        {# Формируем стиль ячейки заранее, чтобы VS Code не ругался на синтаксис #}
+        {% set style_attr = '' %}
+        {% if not l.free and not l.mine %}
+            {% set style_attr = 'style="background-color: ' ~ l.color ~ '; border: 2px solid ' ~ l.color ~ ';"' %}
+        {% endif %}
+
+        <div class="cell {% if l.mine %}mine{% elif not l.free %}occupied{% endif %}"
+             title="{% if l.free %}Свободно{% elif l.mine %}Занято вами{% else %}Пользователь: {{ l.owner }}{% endif %}"
+             {{ style_attr|safe }}>
+            
+            {% if user %}
+                
+                {% if l.free %}
+                    {% if not user.is_admin %}
+                        <form action="/rgz/booking" method="POST" class="cell-form">
+                            <input type="hidden" name="locker_id" value="{{ l.id }}">
+                            <button type="submit" class="cell-btn">{{ l.id }}</button>
+                        </form>
+                    {% else %}
+                         <div class="cell-dummy" onclick="alert('Админ не может бронировать')">{{ l.id }}</div>
+                    {% endif %}
+                
+                {% elif l.mine %}
+                    <form action="/rgz/cancellation" method="POST" class="cell-form">
+                        <input type="hidden" name="locker_id" value="{{ l.id }}">
+                        <button type="submit" class="cell-btn">{{ l.id }}</button>
+                    </form>
+
+                {% elif not l.free and user.is_admin %}
+                    <form action="/rgz/cancellation" method="POST" class="cell-form">
+                        <input type="hidden" name="locker_id" value="{{ l.id }}">
+                        <button type="submit" class="cell-btn" onclick="return confirm('Освободить ячейку {{ l.id }}?')">{{ l.id }}</button>
+                    </form>
+                
+                {% else %}
+                    <div class="cell-dummy" onclick="alert('Занято: {{ l.owner }}')">{{ l.id }}</div>
+                {% endif %}
+
+            {% else %}
+                {% if l.free %}
+                    <a href="/rgz/login" class="cell-btn" onclick="alert('Войдите для бронирования'); return true;">{{ l.id }}</a>
+                {% else %}
+                    <div class="cell-dummy" onclick="alert('Занято: {{ l.owner }}')">{{ l.id }}</div>
+                {% endif %}
+            {% endif %}
+
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

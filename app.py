@@ -1,12 +1,14 @@
 from flask import Flask, url_for, request, redirect, abort, render_template, session
 import datetime
+import os
+
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
 from lab4 import lab4
 from lab5 import lab5
 from lab6 import lab6
-import os
+from rgz import rgz
 
 app = Flask(__name__)
 
@@ -19,6 +21,8 @@ app.register_blueprint(lab3)
 app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6)
+
+app.register_blueprint(rgz, url_prefix='/rgz')
 
 @app.route('/')
 @app.route('/index')
@@ -92,6 +96,7 @@ def index():
         <li><a href="/lab4">Лабораторная работа №4</a></li>
         <li><a href="/lab5">Лабораторная работа №5</a></li>
         <li><a href="/lab6">Лабораторная работа №6</a></li>
+        <li><a href="/rgz/">РГЗ — Камера хранения</a></li>
     </ul>
 </nav>
 
@@ -118,7 +123,10 @@ def not_found(err):
         log_html += f"<li>{record}</li>"
     log_html += "</ul>"
 
-    img = url_for('static', filename='404.png')
+    try:
+        img = url_for('static', filename='404.png')
+    except:
+        img = ""
 
     return f'''
 <!doctype html>
@@ -166,7 +174,8 @@ def not_found(err):
 <p><b>IP:</b> {ip}</p>
 <p><b>Время:</b> {time}</p>
 <p><a href="/">Перейти на главную</a></p>
-<img src="{img}" alt="404">
+<!-- Если картинки нет, браузер покажет иконку "битого изображения", но сервер не упадет -->
+<img src="{img}" alt="">
 <div class="journal">
     {log_html}
 </div>
@@ -212,6 +221,3 @@ def handle_500(err):
 </body>
 </html>
 ''', 500
-
-if __name__ == "__main__":
-    app.run()
