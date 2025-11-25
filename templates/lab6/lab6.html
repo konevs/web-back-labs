@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 6{% endblock %}
+
+{% block script %}
+<script>
+    function getOfficeList() {
+        const url = '/lab6/json-rpc-api';
+        const json = {
+            'jsonrpc': '2.0',
+            'method': 'info',
+            'id': Math.round(Math.random()*1000)
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(json)
+        })
+        .then(response => response.json())
+        .then(data => {
+            const office_list = data.result.offices;
+            const total = data.result.total;
+
+            const ul = document.getElementById('office-list');
+            ul.innerHTML = '';
+
+            for (let i = 0; i < office_list.length; i++){
+                const office = office_list[i];
+                const li = document.createElement('li');
+                li.className = "office-item";
+                li.innerHTML = `
+                    <span class="office-info">
+                        <b>Кабинет ${office.number}</b> — 
+                        ${office.tenant || 'Свободен'}
+                        <span class="price">${office.price} руб.</span>
+                    </span>
+                `;
+
+                const bookingButton = document.createElement('button');
+                bookingButton.innerText = 'Зарезервировать';
+                bookingButton.className = "btn";
+                bookingButton.onclick = function(){booking(office.number)};
+                li.appendChild(bookingButton);
+
+                const cancellationButton = document.createElement('button');
+                cancellationButton.innerText = 'Освободить';
+                cancellationButton.className = "btn cancel";
+                cancellationButton.onclick = function(){cancellation(office.number)};
+                li.appendChild(cancellationButton);
+
+                ul.appendChild(li);
+            }
+
+            document.getElementById('total').innerText =
+                `Суммарная стоимость аренды: ${total} руб.`;
+        });
+    }
+
+    function booking(officeNumber) {
+        const url = '/lab6/json-rpc-api';
+        const json = {
+            'jsonrpc': '2.0',
+            'method': 'booking',
+            'params': officeNumber,
+            'id': Math.round(Math.random()*1000)
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(json)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.error) getOfficeList();
+        });
+    }
+
+    function cancellation(officeNumber) {
+        const url = '/lab6/json-rpc-api';
+        const json = {
+            'jsonrpc': '2.0',
+            'method': 'cancellation',
+            'params': officeNumber,
+            'id': Math.round(Math.random()*1000)
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(json)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.error) getOfficeList();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        getOfficeList();
+    });
+</script>
+
+<style>
+    body {
+        background: #f4f6fb;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    #office-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .office-item {
+        padding: 15px 18px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ffffff;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .office-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    }
+
+    .office-info {
+        font-size: 16px;
+        color: #444;
+    }
+
+    .price {
+        color: #1a8f2d;
+        font-weight: 600;
+        margin-left: 12px;
+        font-size: 15px;
+    }
+
+    .btn {
+        margin-left: 10px;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        background: #6a5acd;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+        background: #5948c8;
+        transform: scale(1.05);
+    }
+
+    .btn.cancel {
+        background: #ff4d4d;
+    }
+
+    .btn.cancel:hover {
+        background: #e64444;
+    }
+
+    #total {
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        color: #333;
+    }
+</style>
+
+{% endblock %}
+
+{% block main %}
+<h1>Список кабинетов</h1>
+<ul id="office-list"></ul>
+<p id="total"></p>
+{% endblock %}

@@ -5,43 +5,90 @@
 {% block main %}
 <style>
     body {
-        font-family: Arial, Helvetica, sans-serif;
-        background-color: white;
-        color: black;
+        background: #f4f6fb;
+        font-family: "Segoe UI", sans-serif;
+        color: #333;
     }
-    .lab5 {
-        background-color: rgb(0, 255, 157);
-        max-width: 700px;
-        margin: 50px;
+
+    h1 {
         text-align: center;
-        padding: 40px;
-        border-radius: 12px;
+        margin-top: 30px;
+        color: #333;
+        font-weight: 600;
     }
+
+    .lab5 {
+        background: #ffffff;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 35px 40px;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: box-shadow 0.2s ease, transform 0.15s ease;
+    }
+
+    .lab5:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 20px rgba(0,0,0,0.12);
+    }
+
+    .lab5 ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .lab5 a {
+        display: block;
+        margin: 10px 0;
+        padding: 12px 18px;
+        background: #6a5acd;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background 0.2s ease, transform 0.12s ease;
+    }
+
+    .lab5 a:hover {
+        background: #5948c8;
+        transform: scale(1.03);
+    }
+
     .username {
-        font-weight: bold;
+        margin-top: 25px;
         text-align: right;
+        font-weight: 600;
+        font-size: 17px;
+        color: #444;
     }
 </style>
-    <h1>База знаний</h1>
-    <div class="lab5">
-            <ul style="padding: 0; font-size: 18px"> 
-            <a href="/lab5/list">Список статей</a>
-            <a href="/lab5/create">Создать статью</a>
-            <a href="/lab5/users">Все пользователи</a>    
-            {% if login %}
-                <a href="/lab5/logout">Выйти</a>
-            {% else %}
-                <a href="/lab5/login">Войти</a>
-                <a href="/lab5/register">Регистрация</a>
-            {% endif %}
 
-            <div class="username">
-                {% if login %}
-                    {{ login }}
-                {% else %}
-                    Anonymous
-                {% endif %}
-            </div>
-        </ul>
-    </div>
+<h1>База знаний</h1>
+
+<div class="lab5">
+    <ul>
+        <a href="/lab5/list">Список статей</a>
+        <a href="/lab5/create">Создать статью</a>
+        <a href="/lab5/users">Все пользователи</a>
+
+        {% if login %}
+            <a href="/lab5/logout">Выйти</a>
+        {% else %}
+            <a href="/lab5/login">Войти</a>
+            <a href="/lab5/register">Регистрация</a>
+        {% endif %}
+
+        <div class="username">
+            {% if login %}
+                {{ login }}
+            {% else %}
+                Anonymous
+            {% endif %}
+        </div>
+    </ul>
+</div>
+
 {% endblock %}

@@ -3,54 +3,107 @@ import datetime
 
 lab1 = Blueprint('lab1', __name__)
 
+STYLE = """
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 40px;
+    color: #222;
+}
+.container {
+    background: white;
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+}
+a:hover {
+    text-decoration: underline;
+}
+.nav {
+    margin: 20px 0;
+    text-align: center;
+}
+ul {
+    margin-top: 15px;
+}
+img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+.counter-box {
+    background: #e8f5ff;
+    padding: 15px;
+    border-radius: 10px;
+}
+</style>
+"""
 
 @lab1.route('/lab1')
 def lab():
-    return '''<!doctype html>
+    return f'''<!doctype html>
 <html>
-<head><meta charset="utf-8"><title>Лабораторная 1</title></head>
+<head><meta charset="utf-8"><title>Лабораторная 1</title>{STYLE}</head>
 <body>
-    <h1>Лабораторная 1</h1>
-    <p>Flask — фреймворк для создания веб-приложений на языке программирования Python, использующий набор инструментов Werkzeug, 
-    а также шаблонизатор Jinja2. Относится к категории так называемых микрофреймворков — минималистичных каркасов веб-приложений, 
-    сознательно предоставляющих лишь самые базовые возможности.</p>
-    <p><a href="/">На корень сайта</a></p>
+<div class="container">
+    <h1>Лабораторная работа 1</h1>
+
+    <p>
+        Flask — фреймворк для создания веб-приложений на Python.  
+        Он использует Werkzeug и Jinja2, относится к микрофреймворкам — то есть содержит только базовую структуру, 
+        предоставляя программисту максимальную гибкость.
+    </p>
+
+    <div class="nav"><a href="/">Вернуться на главную</a></div>
+
     <h2>Список роутов</h2>
     <ul>
         <li><a href="/">Главная страница</a></li>
         <li><a href="/index">Index</a></li>
-        <li><a href="/lab1/web">/lab1/web</a></li>
-        <li><a href="/lab1/author">/lab1/author</a></li>
-        <li><a href="/lab1/image">/lab1/image</a></li>
-        <li><a href="/lab1/counter">/lab1/counter</a></li>
-        <li><a href="/lab1/counter/clear">/lab1/counter/clear</a></li>
-        <li><a href="/lab1/info">/lab1/info</a></li>
-        <li><a href="/lab1/created">/lab1/created</a></li>
+        <li><a href="/lab1/web">web</a></li>
+        <li><a href="/lab1/author">author</a></li>
+        <li><a href="/lab1/image">image</a></li>
+        <li><a href="/lab1/counter">counter</a></li>
+        <li><a href="/lab1/counter/clear">counter_clear</a></li>
+        <li><a href="/lab1/info">info</a></li>
+        <li><a href="/lab1/created">created</a></li>
         <li><a href="400">400 Bad Request</a></li>
         <li><a href="401">401 Unauthorized</a></li>
         <li><a href="402">402 Payment Required</a></li>
         <li><a href="403">403 Forbidden</a></li>
-        <li><a href="404">Страница не найдена (404)</a></li>
+        <li><a href="404">404 Not Found</a></li>
         <li><a href="405">405 Method Not Allowed</a></li>
         <li><a href="418">418 I'm a teapot</a></li>
-        <li><a href="/cause_500">Внутренняя ошибка сервера (500)</a></li>
+        <li><a href="/cause_500">500 internal error</a></li>
     </ul>
+</div>
 </body>
 </html>'''
 
 
 @lab1.route("/lab1/web")
 def web():
-    return """<!doctype html> 
-        <html>
-            <body>
-                <h1>web-сервер на flask</h1>
-                <a href="/lab1/author">author</a>
-            </body>
-        </html>""", 200, {
-            "X-Server": "sample",
-            'Content-Type': 'text/plain; charset=utf-8'
-            }
+    return """<!doctype html>
+<html>
+<body>
+<h1>web-сервер на flask</h1>
+<a href="/lab1/author">author</a>
+</body>
+</html>""", 200, {
+        "X-Server": "sample",
+        'Content-Type': 'text/plain; charset=utf-8'
+    }
 
 
 @lab1.route("/lab1/author")
@@ -59,65 +112,82 @@ def author():
     group = "ФБИ-34"
     faculty = "ФБ"
 
-    return """<!doctype html>
-        <html>
-            <body>
-                <p>Студент: """ + name + """</p>
-                <p>Группа: """ + group + """</p>
-                <p>Факультет: """ + faculty + """</p>
-                <a href="/lab1/web">web</a>
-            </body>
-        </html>"""
+    return f'''<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Автор</title>{STYLE}</head>
+<body>
+<div class="container">
+    <h1>Автор работы</h1>
+
+    <p><b>Студент:</b> {name}</p>
+    <p><b>Группа:</b> {group}</p>
+    <p><b>Факультет:</b> {faculty}</p>
+
+    <div class="nav">
+        <a href="/lab1/web">Назад</a>
+    </div>
+</div>
+</body>
+</html>'''
 
 
 @lab1.route('/lab1/image')
 def image():
     css = url_for('static', filename='lab1/lab1.css')
     img = url_for('static', filename='lab1/oak.jpg')
-    html = f'''<!doctype html>
+
+    return f'''<!doctype html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Дуб</title>
-    <link rel="stylesheet" href="{css}">
+<meta charset="utf-8">
+<title>Дуб</title>
+<link rel="stylesheet" href="{css}">
+{STYLE}
 </head>
 <body>
+<div class="container">
     <h1>Дуб</h1>
-    <img class="lab1" src="{img}" alt="Дуб">
+    <img src="{img}" alt="Дуб">
+</div>
 </body>
-</html>'''
-    headers = {
+</html>''', 200, {
         'Content-Language': 'ru',
         'X-Project': 'lab1',
         'X-Author': 'Konev'
     }
-    return html, 200, headers
+
 
 count = 0
-
 
 @lab1.route('/lab1/counter')
 def counter():
     global count
     count += 1
+
     time = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
     url = request.url
     client_ip = request.remote_addr
     clear_url = url_for('lab1.clear_counter')
-    return f'''
-<!doctype html>
+
+    return f'''<!doctype html>
 <html>
-<head><title>Счётчик</title></head>
+<head><meta charset="utf-8"><title>Счётчик</title>{STYLE}</head>
 <body>
-    Сколько раз вы сюда заходили: {count}
-    <hr>
-    Дата и время: {time} <br>
-    Запрошенный адрес: {url} <br>
-    Ваш IP-адрес: {client_ip} <br>
-    <p><a href="{clear_url}">Очистить счётчик</a></p>
+<div class="container">
+    <h1>Счётчик посещений</h1>
+
+    <div class="counter-box">
+        Вы заходили на эту страницу: <b>{count}</b> раз(а)
+    </div>
+
+    <p><b>Дата и время:</b> {time}</p>
+    <p><b>Адрес запроса:</b> {url}</p>
+    <p><b>IP-адрес:</b> {client_ip}</p>
+
+    <a href="{clear_url}">Очистить счётчик</a>
+</div>
 </body>
-</html>
-'''
+</html>'''
 
 
 @lab1.route('/lab1/counter/clear')
@@ -135,98 +205,39 @@ def info():
 @lab1.route("/lab1/created")
 def created():
     return '''
-<!doctype html"
+<!doctype html>
 <html>
-    <body>
-        <h1>Создано успешно</h1>
-        <div><i>что-то создано...</i></div>
-    </body>
+<body>
+<h1>Создано успешно</h1>
+<i>что-то создано...</i>
+</body>
 </html>
-''',201
+''', 201
 
 
 @lab1.route("/400")
 def bad_request():
-    return '''<!doctype html>
-<html>
-<head>
-    <title>400 Bad Request</title>
-</head>
-<body>
-    <h1>400 Bad Request</h1>
-    <p>Сервер не может обработать запрос из-за синтаксической ошибки.</p>
-</body>
-</html>''', 400
-
+    return "<h1>400 Bad Request</h1>", 400
 
 @lab1.route("/401")
 def unauthorized():
-    return '''<!doctype html>
-<html>
-<head>
-    <title>401 Unauthorized</title>
-</head>
-<body>
-    <h1>401 Unauthorized</h1>
-    <p>Для доступа к запрашиваемому ресурсу требуется аутентификация.</p>
-</body>
-</html>''', 401
-
+    return "<h1>401 Unauthorized</h1>", 401
 
 @lab1.route("/402")
 def payment_required():
-    return '''<!doctype html>
-<html>
-<head>
-    <title>402 Payment Required</title>
-</head>
-<body>
-    <h1>402 Payment Required</h1>
-    <p>Для доступа к ресурсу требуется оплата.</p>
-</body>
-</html>''', 402
-
+    return "<h1>402 Payment Required</h1>", 402
 
 @lab1.route("/403")
 def forbidden():
-    return '''<!doctype html>
-<html>
-<head>
-    <title>403 Forbidden</title>
-</head>
-<body>
-    <h1>403 Forbidden</h1>
-    <p>Доступ к ресурсу запрещен.</p>
-</body>
-</html>''', 403
-
+    return "<h1>403 Forbidden</h1>", 403
 
 @lab1.route("/405")
 def method_not_allowed():
-    return '''<!doctype html>
-<html>
-<head>
-    <title>405 Method Not Allowed</title>
-</head>
-<body>
-    <h1>405 Method Not Allowed</h1>
-    <p>Метод нельзя применить для данного ресурса.</p>
-</body>
-</html>''', 405
-
+    return "<h1>405 Method Not Allowed</h1>", 405
 
 @lab1.route("/418")
 def teapot():
-    return '''<!doctype html>
-<html>
-<head>
-    <title>418 I'm a teapot</title>
-</head>
-<body>
-    <h1>418 I'm a teapot</h1>
-    <p>Я чайник и не могу заваривать кофе.</p>
-</body>
-</html>''', 418
+    return "<h1>418 I'm a teapot</h1>", 418
 
 
 @lab1.route('/cause_500')
