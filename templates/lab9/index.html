@@ -4,34 +4,41 @@
 
 {% block script %}
 <script>
+    const staticPath = "{{ url_for('static', filename='lab9/') }}";
+
     async function openBox(id) {
         const formData = new FormData();
         formData.append('gift_id', id);
 
-        const response = await fetch('/lab9/open', {
-            method: 'POST',
-            body: formData
-        });
+        try {
+            const response = await fetch('/lab9/open', {
+                method: 'POST',
+                body: formData
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok) {
-            // Если успех, меняем вид коробки
-            const boxDiv = document.getElementById(`box-${id}`);
-            boxDiv.innerHTML = `
-                <div class="opened-gift">
-                    <img src="{{ url_for('static', filename='lab9/') }}${data.gift.image}" alt="gift">
-                    <p>${data.gift.message}</p>
-                </div>
-            `;
-            boxDiv.classList.add('opened');
-            boxDiv.onclick = null; // Убираем кликабельность
-            
-            // Обновляем счетчик (уменьшаем визуально или перезагружаем часть, но по ТЗ перезагрузка не обязательна)
-            location.reload(); // Простой способ обновить счетчики, так как позиции сохранены в сессии
-        } else {
-            // Если ошибка (например, лимит превышен)
-            alert(data.error);
+            if (response.ok) {
+                const boxDiv = document.getElementById(`box-${id}`);
+                
+                boxDiv.innerHTML = `
+                    <div class="opened-gift">
+                        <img src="${staticPath + data.gift.image_open}" alt="Подарок">
+                        <p class="gift-message">${data.gift.message}</p>
+                    </div>
+                `;
+                
+                boxDiv.classList.add('opened');
+                boxDiv.removeAttribute('onclick');
+                
+                setTimeout(() => {
+                     location.reload(); 
+                }, 1000);
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
         }
     }
 </script>
@@ -43,60 +50,70 @@
         position: relative;
         width: 100%;
         height: 600px;
-        background-color: #f0f8ff;
-        background-image: url('https://www.transparenttextures.com/patterns/snow.png'); /* Эффект снега */
-        border: 2px solid #2c3e50;
-        overflow: hidden;
+        background-color: #e3f2fd;
+        background-image: url('https://www.transparenttextures.com/patterns/snow.png'); 
+        border: 2px solid #90caf9;
         border-radius: 15px;
         margin-top: 20px;
+        overflow: hidden;
     }
     
     .gift-box {
         position: absolute;
-        width: 80px;
-        cursor: pointer;
-        transition: transform 0.2s;
+        width: 100px;
         text-align: center;
+        transition: transform 0.3s;
+        z-index: 1; 
     }
 
-    .gift-box:hover {
-        transform: scale(1.1);
+    .gift-box:not(.opened):hover {
+        transform: scale(1.1) rotate(5deg);
+        cursor: pointer;
+        z-index: 2; 
     }
 
     .gift-box img {
         width: 100%;
         display: block;
+        filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
     }
 
     .opened-gift {
         background: white;
-        border: 1px solid gold;
+        border: 2px solid #ff9800;
         padding: 5px;
-        border-radius: 5px;
+        border-radius: 8px;
         width: 120px;
-        font-size: 12px;
+        position: relative;
+        z-index: 100;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .gift-message {
+        font-size: 14px;
         font-weight: bold;
-        color: #d32f2f;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        color: #d84315;
+        margin: 5px 0 0 0;
     }
 
     .controls {
-        margin-bottom: 20px;
         text-align: center;
+        margin-bottom: 20px;
         padding: 15px;
-        background: #e8f5e9;
+        background: #fff3e0;
         border-radius: 10px;
+        border: 1px solid #ffe0b2;
     }
 
     .reset-btn {
-        background-color: #d32f2f; /* Новогодний красный */
+        background-color: #d32f2f;
         color: white;
         padding: 10px 20px;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
         border: none;
+        border-radius: 5px;
         cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
     }
     .reset-btn:hover {
         background-color: #b71c1c;
@@ -104,31 +121,27 @@
 </style>
 
 <div class="controls">
-    <h1>🎄 Новогодние подарки 🎄</h1>
-    <p>Открыто подарков: <b>{{ count }}</b>. Осталось открыть: <b>{{ 3 - count if count < 3 else 0 }}</b>.</p>
-    <p>Всего коробок на поле: {{ gifts|length }}</p>
+    <h1>🎁 Новогодние подарки 🎁</h1>
+    <p>Открыто: <b>{{ count }}</b>. Можно открыть еще: <b>{{ 3 - count if count < 3 else 0 }}</b>.</p>
     
-    {% if current_user.is_authenticated %}
     <form action="/lab9/reset" method="post" style="display:inline;">
-        <button type="submit" class="reset-btn">🎅 Дед Мороз (Сбросить)</button>
+        <button type="submit" class="reset-btn">🔄 Сбросить</button>
     </form>
-    {% endif %}
 </div>
 
 <div class="gift-container">
     {% for gift in gifts %}
-        <div id="box-{{ gift.id }}" class="gift-box" style="left: {{ gift.x }}%; top: {{ gift.y }}%;" 
+        <div id="box-{{ gift.id }}" class="gift-box {{ 'opened' if gift.open else '' }}" 
+             style="{{ gift.position_css }}" 
              {% if not gift.open %}onclick="openBox({{ gift.id }})"{% endif %}>
             
             {% if gift.open %}
                 <div class="opened-gift">
-                    <!-- Замените расширение картинки, если нужно -->
-                    <img src="{{ url_for('static', filename='lab9/' + gift.image) }}" alt="gift">
-                    <p>{{ gift.message }}</p>
+                    <img src="{{ url_for('static', filename='lab9/' + gift.image_open) }}" alt="Подарок">
+                    <p class="gift-message">{{ gift.message }}</p>
                 </div>
             {% else %}
-                <!-- Убедитесь, что box.png лежит в static/lab9/ -->
-                <img src="{{ url_for('static', filename='lab9/box.png') }}" alt="Закрытая коробка">
+                <img src="{{ url_for('static', filename='lab9/' + gift.image_closed) }}" alt="Коробка">
             {% endif %}
         </div>
     {% endfor %}
