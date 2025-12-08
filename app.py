@@ -62,29 +62,84 @@ def index():
     return '''<!doctype html>
 <html>
     <head>
-        <title>НГТУ, ФБ, Лабораторные работы</title>
-    </head>
-    <body>
-        <header><h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1></header>
-        <nav>
-            <ul>
-                <li><a href="/lab1">Первая лабораторная</a></li>
-                <li><a href="/lab2">Вторая лабораторная</a></li>
-                <li><a href="/lab3">Третья лабораторная</a></li>
-                <li><a href="/lab4">Четвертая лабораторная</a></li>
-                <li><a href="/lab5">Пятая лабораторная</a></li>
-                <li><a href="/lab6">Шестая лабораторная</a></li>
-                <li><a href="/lab7">Седьмая лабораторная</a></li>
-                <li><a href="/lab8">Восьмая лабораторная</a></li>
-                <li><a href="/lab9">Девятая лабораторная</a></li>
-                <li><a href="/rgz/">РГЗ — Камера хранения</a></li>
-            </ul>
-        </nav>
-        <footer>
-            <p>Конев Станислав, ФБИ-34, 3 курс, 2025</p>
-        </footer>
-    </body>
-</html>'''
+    <meta charset="utf-8">
+    <title>НГТУ, ФБ — Лабораторные работы</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background: #9bc5e8;
+            padding: 15px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 22px;
+            margin: 5px 0;
+            font-weight: normal;
+            color: #1a3c5a;
+        }
+        nav {
+            background: white;
+            padding: 15px 25px;
+            border-top: 1px solid #ddd;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            margin: 8px 0;
+        }
+        nav a {
+            text-decoration: none;
+            font-size: 17px;
+            color: #1a3c5a;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: 40px;
+            background: #9bc5e8;
+            color: #1a3c5a;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>WEB-программирование, часть 2 — Лабораторные</h1>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/lab1">Лабораторная работа №1</a></li>
+        <li><a href="/lab2">Лабораторная работа №2</a></li>
+        <li><a href="/lab3">Лабораторная работа №3</a></li>
+        <li><a href="/lab4">Лабораторная работа №4</a></li>
+        <li><a href="/lab5">Лабораторная работа №5</a></li>
+        <li><a href="/lab6">Лабораторная работа №6</a></li>
+        <li><a href="/lab7">Лабораторная работа №7</a></li>
+        <li><a href="/lab8">Лабораторная работа №8</a></li>
+        <li><a href="/lab9">Лабораторная работа №9</a></li>
+        <li><a href="/rgz/">РГЗ — Камера хранения</a></li>
+    </ul>
+</nav>
+
+<footer>
+    Конев Станислав Сергеевич, ФБИ-34, 3 курс, 2025
+</footer>
+</body>
+</html>
+'''
 
 
 journal = []
